@@ -1,12 +1,5 @@
 local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
 
-Rayfield:Notify({
-   Title = "Success",
-   Content = "Hub Launched Successfully!",
-   Duration = 6.5,
-   Image = "laptop-minimal-check",
-})
-
 local Window = Rayfield:CreateWindow({
    Name = "BTG Hub",
    Icon = 0, -- Icon in Topbar. Can use Lucide Icons (string) or Roblox Image (number). 0 to use no icon (default).
