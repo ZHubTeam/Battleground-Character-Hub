@@ -59,7 +59,7 @@ MainTab:CreateButton({
          task.spawn(function()
             while AutoFarming and Boss.Parent do
                Char:MoveTo(Boss.Torso.Position)
-               task.wait(1)
+               task.wait(0.00001)
             end
          end)
       else
