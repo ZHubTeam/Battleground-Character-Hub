@@ -26,25 +26,29 @@ local Window = Rayfield:CreateWindow({
    KeySettings = {
       Title = "Team ZHub | BTG Character Hub",
       Subtitle = "Key Check",
-      Note = "Use the key ILOVEZHUB to get access.",
+      Note = "Use the key BTGxZHUB to get access.",
       FileName = "KeyConfig",
       SaveKey = true,
       GrabKeyFromSite = false,
-      Key = {"ILOVEZHUB"}
+      Key = {"BTGxZHUB"}
    }
 })
 
-local MainTab = Window:CreateTab("Home", nil)
+local MainTab = Window:CreateTab("Home", "house")
 
--- Use a variable outside the function to preserve state between presses
 local AutoFarming = false
+local Player = game.Players.LocalPlayer
+local Character = Player.Character or Player.CharacterAdded:Wait()
+
+-- Update character on death/respawn
+Player.CharacterAdded:Connect(function(char)
+   Character = char
+end)
 
 MainTab:CreateButton({
    Name = "Autofarm Boss",
    Callback = function()
       local Boss = workspace.FX:FindFirstChild("Heian Imaginary Demon")
-      local Player = game.Players.LocalPlayer
-      local Char = Player.Character or Player.CharacterAdded:Wait()
 
       if not Boss then
          warn("Boss not found in workspace.FX.")
@@ -55,11 +59,12 @@ MainTab:CreateButton({
          AutoFarming = true
          warn("Boss found! Starting autofarm...")
 
-         -- Looping movement (can be adjusted or stopped with a toggle)
          task.spawn(function()
             while AutoFarming and Boss.Parent do
-               Char:MoveTo(Boss.Torso.Position)
-               task.wait(0.00001)
+               if Character and Character:FindFirstChild("HumanoidRootPart") then
+                  Character:MoveTo(Boss.Torso.Position)
+               end
+               task.wait(1)
             end
          end)
       else
