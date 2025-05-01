@@ -36,18 +36,18 @@ local Window = Rayfield:CreateWindow({
 
 local MainTab = Window:CreateTab("Home", "house")
 
-local AutoFarming = false
-local Player = game.Players.LocalPlayer
-local Character = Player.Character or Player.CharacterAdded:Wait()
-
--- Update character on death/respawn
-Player.CharacterAdded:Connect(function(char)
-   Character = char
-end)
-
 MainTab:CreateButton({
    Name = "Autofarm Boss",
    Callback = function()
+      local AutoFarming = false
+      local Player = game.Players.LocalPlayer
+      local Character = Player.Character or Player.CharacterAdded:Wait()
+
+-- Update character on death/respawn
+      Player.CharacterAdded:Connect(function(char)
+         Character = char
+      end)
+
       AutoFarming = not AutoFarming
 
       if AutoFarming then
