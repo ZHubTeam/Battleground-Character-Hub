@@ -2,7 +2,6 @@ local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
 
 local Window = Rayfield:CreateWindow({
    Name = "BTG Hub",
-   Icon = 0,
    LoadingTitle = "BTG Hub",
    LoadingSubtitle = "by the ZHub Team",
    Theme = "Default",
@@ -36,14 +35,16 @@ local Window = Rayfield:CreateWindow({
 
 local MainTab = Window:CreateTab("Home", "house")
 
+-- Autofarm state variable moved outside callback to persist toggle state
+local AutoFarming = false
+
 MainTab:CreateButton({
    Name = "Autofarm Boss",
    Callback = function()
-      local AutoFarming = false
       local Player = game.Players.LocalPlayer
       local Character = Player.Character or Player.CharacterAdded:Wait()
 
--- Update character on death/respawn
+      -- Update character on respawn
       Player.CharacterAdded:Connect(function(char)
          Character = char
       end)
@@ -55,10 +56,18 @@ MainTab:CreateButton({
 
          task.spawn(function()
             while AutoFarming do
-               local Boss = workspace.FX:FindFirstChild("Heian Imaginary Demon")
-               if Boss and Boss:FindFirstChild("Torso") and Character and Character:FindFirstChild("HumanoidRootPart") then
-                  Character:MoveTo(Boss.Torso.Position)
+               -- Safety check in case character dies
+               if not Character or not Character:FindFirstChild("HumanoidRootPart") then
+                  task.wait(1)
+                  continue
                end
+
+               local Boss = workspace:FindFirstChild("FX") and workspace.FX:FindFirstChild("Heian Imaginary Demon")
+
+               if Boss and Boss:FindFirstChild("Torso") then
+                  Character:MoveTo(Boss.Torso.Position + Vector3.new(0, 3, 0)) -- Move slightly above to avoid collision
+               end
+
                task.wait(1)
             end
          end)
@@ -67,3 +76,4 @@ MainTab:CreateButton({
       end
    end,
 })
+
