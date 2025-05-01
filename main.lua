@@ -8,30 +8,30 @@ local Window = Rayfield:CreateWindow({
    Theme = "Default", -- Check https://docs.sirius.menu/rayfield/configuration/themes
 
    DisableRayfieldPrompts = false,
-   DisableBuildWarnings = false, -- Prevents Rayfield from warning when the script has a version mismatch with the interface
+   DisableBuildWarnings = false,
 
    ConfigurationSaving = {
       Enabled = true,
-      FolderName = nil, -- Create a custom folder for your hub/game
+      FolderName = nil,
       FileName = "BattlegroundCharacterHub"
    },
 
    Discord = {
-      Enabled = true, -- Prompt the user to join your Discord server if their executor supports it
-      Invite = "https://discord.com/invite/g6xXRNX3GY", -- The Discord invite code, do not include discord.gg/. E.g. discord.gg/ ABCD would be ABCD
-      RememberJoins = true -- Set this to false to make them join the discord every time they load it up
+      Enabled = true,
+      Invite = "g6xXRNX3GY", -- Just the invite code
+      RememberJoins = true
    },
 
-   KeySystem = false, -- Set this to true to use our key system
+   KeySystem = false,
    KeySettings = {
       Title = "Team ZHub | BTG Character Hub",
       Subtitle = "Key Check",
-      Note = "Use the key ILOVEZHUB to get access.", 
+      Note = "Use the key ILOVEZHUB to get access.",
       FileName = "KeyConfig",
       SaveKey = true,
-      GrabKeyFromSite = false, 
+      GrabKeyFromSite = false,
       Key = {"ILOVEZHUB"}
    }
-
-    local MainTab = Window:CreateTab("Home", "house")
 })
+
+local MainTab = Window:CreateTab("Home", "house")
