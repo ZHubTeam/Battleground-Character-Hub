@@ -35,7 +35,7 @@ local Window = Rayfield:CreateWindow({
 })
 
 local MainTab = Window:CreateTab("Home", "house")
-local Button = Tab:CreateButton({
+local Button = MainTab:CreateButton({
    Name = "Autofarm Boss",
    Callback = function()
          local Boss = workspace.FX["Heian Imaginary Demon"]
