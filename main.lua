@@ -34,7 +34,7 @@ local Window = Rayfield:CreateWindow({
    }
 })
 
-local MainTab = Window:CreateTab("Home", "house")
+local MainTab = Window:CreateTab("Home", nil)
 
 -- Use a variable outside the function to preserve state between presses
 local AutoFarming = false
