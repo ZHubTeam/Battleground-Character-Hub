@@ -48,27 +48,21 @@ end)
 MainTab:CreateButton({
    Name = "Autofarm Boss",
    Callback = function()
-      local Boss = workspace.FX:FindFirstChild("Heian Imaginary Demon")
+      AutoFarming = not AutoFarming
 
-      if not Boss then
-         warn("Boss not found in workspace.FX.")
-         return
-      end
-
-      if not AutoFarming then
-         AutoFarming = true
-         warn("Boss found! Starting autofarm...")
+      if AutoFarming then
+         warn("Autofarm enabled. Waiting for boss...")
 
          task.spawn(function()
-            while AutoFarming and Boss.Parent do
-               if Character and Character:FindFirstChild("HumanoidRootPart") then
+            while AutoFarming do
+               local Boss = workspace.FX:FindFirstChild("Heian Imaginary Demon")
+               if Boss and Boss:FindFirstChild("Torso") and Character and Character:FindFirstChild("HumanoidRootPart") then
                   Character:MoveTo(Boss.Torso.Position)
                end
                task.wait(1)
             end
          end)
       else
-         AutoFarming = false
          warn("Autofarm disabled.")
       end
    end,
