@@ -1,4 +1,3 @@
--- MADE USING RayfieldUI LIB
 local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
 
 Rayfield:Notify({
