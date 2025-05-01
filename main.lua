@@ -35,3 +35,20 @@ local Window = Rayfield:CreateWindow({
 })
 
 local MainTab = Window:CreateTab("Home", "house")
+local Button = Tab:CreateButton({
+   Name = "Autofarm Boss",
+   Callback = function()
+         local Boss = workspace["Heian Imaginary Demon"]
+         local Player = game.Players.LocalPlayer
+         local Char = Player.Character
+         local AutoFarming = false
+
+         if Boss and AutoFarming == false then
+               AutoFarming = true
+         end
+
+         if Boss and AutoFarming == true then
+            Character:MoveTo(Boss.Torso.Position)
+         end
+   end,
+})
