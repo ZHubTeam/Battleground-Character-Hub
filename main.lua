@@ -1,166 +1,93 @@
-if _G.ScriptHubLoaded then return end
-_G.ScriptHubLoaded = true
+-- LocalScript inside ScreenGui
 
--- Load Rayfield UI
-local Rayfield = loadstring(game:HttpGet('https://raw.githubusercontent.com/shlexware/Rayfield/main/source'))()
+-- Create UI elements
+local player = game.Players.LocalPlayer
+local screenGui = script.Parent
 
-local Window = Rayfield:CreateWindow({
-    Name = "ZHub - Script Hub",
-    LoadingTitle = "ZHub",
-    LoadingSubtitle = "Initializing...",
-    ConfigurationSaving = {
-        Enabled = false -- Disabled to prevent config-related bugs
-    }
-})
+-- Main Hub Frame
+local hub = Instance.new("Frame")
+hub.Size = UDim2.new(0, 400, 0, 300)
+hub.Position = UDim2.new(0.5, -200, 0.5, -150)
+hub.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+hub.BorderSizePixel = 0
+hub.Visible = false
+hub.Active = true
+hub.Draggable = true
+hub.Parent = screenGui
 
--- Tabs
-local MainTab = Window:CreateTab("Main")
-local TeleportTab = Window:CreateTab("Teleport")
-local InfoTab = Window:CreateTab("Info")
+-- Round Corners
+local uicorner = Instance.new("UICorner")
+uicorner.CornerRadius = UDim.new(0, 10)
+uicorner.Parent = hub
 
--- ESP Script
-local function runESP()
-    local Players = game:GetService("Players")
-    local LocalPlayer = Players.LocalPlayer
+-- Title
+local title = Instance.new("TextLabel")
+title.Text = "ZHub | Universal Hub"
+title.Font = Enum.Font.GothamBold
+title.TextColor3 = Color3.fromRGB(255, 255, 255)
+title.BackgroundTransparency = 1
+title.Size = UDim2.new(1, 0, 0, 40)
+title.Position = UDim2.new(0, 0, 0, 0)
+title.TextSize = 20
+title.Parent = hub
 
-    local function highlightCharacter(char)
-        if not char:FindFirstChild("Highlight") then
-            local highlight = Instance.new("Highlight")
-            highlight.FillColor = Color3.fromRGB(255, 0, 0)
-            highlight.OutlineColor = Color3.fromRGB(255, 255, 255)
-            highlight.Adornee = char
-            highlight.Parent = char
-        end
-    end
+-- Toggle Button
+local toggle = Instance.new("TextButton")
+toggle.Size = UDim2.new(0, 120, 0, 40)
+toggle.Position = UDim2.new(0, 20, 1, 10)
+toggle.Text = "Toggle Hub"
+toggle.Font = Enum.Font.Gotham
+toggle.TextSize = 16
+toggle.TextColor3 = Color3.fromRGB(255, 255, 255)
+toggle.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+toggle.Parent = screenGui
 
-    for _, player in pairs(Players:GetPlayers()) do
-        if player ~= LocalPlayer and player.Character then
-            highlightCharacter(player.Character)
-        end
-    end
+local toggleUICorner = Instance.new("UICorner", toggle)
+toggleUICorner.CornerRadius = UDim.new(0, 10)
 
-    Players.PlayerAdded:Connect(function(player)
-        player.CharacterAdded:Connect(function(char)
-            wait(1)
-            highlightCharacter(char)
-        end)
-    end)
+-- Buttons Layout
+local layout = Instance.new("UIListLayout", hub)
+layout.Padding = UDim.new(0, 10)
+layout.FillDirection = Enum.FillDirection.Vertical
+layout.HorizontalAlignment = Enum.HorizontalAlignment.Center
+layout.SortOrder = Enum.SortOrder.LayoutOrder
+
+-- Function to make script buttons
+local function createScriptButton(name, scriptFunc)
+	local button = Instance.new("TextButton")
+	button.Size = UDim2.new(0, 300, 0, 40)
+	button.Text = name
+	button.Font = Enum.Font.Gotham
+	button.TextSize = 16
+	button.TextColor3 = Color3.fromRGB(255, 255, 255)
+	button.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
+	button.Parent = hub
+	
+	local corner = Instance.new("UICorner", button)
+	corner.CornerRadius = UDim.new(0, 8)
+
+	button.MouseButton1Click:Connect(scriptFunc)
 end
 
--- Fly Script
-local function runFly()
-    local Players = game:GetService("Players")
-    local RunService = game:GetService("RunService")
-    local UserInputService = game:GetService("UserInputService")
-    local LocalPlayer = Players.LocalPlayer
+-- Example Scripts
+createScriptButton("Infinite Jump", function()
+	local Player = game:GetService("Players").LocalPlayer
+	local UIS = game:GetService("UserInputService")
+	
+	UIS.JumpRequest:Connect(function()
+		Player.Character:FindFirstChildOfClass("Humanoid"):ChangeState("Jumping")
+	end)
+end)
 
-    local flying = false
-    local bv, bg
-    local speed = 50
+createScriptButton("Fly Script", function()
+	loadstring(game:HttpGet("https://pastebin.com/raw/VXQm5Rja"))()
+end)
 
-    local function startFly()
-        if flying then return end
-        flying = true
+createScriptButton("ESP Script", function()
+	loadstring(game:HttpGet("https://pastebin.com/raw/Rx4Lcxj8"))()
+end)
 
-        local hrp = LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
-        if not hrp then return end
-
-        bv = Instance.new("BodyVelocity")
-        bv.Velocity = Vector3.zero
-        bv.MaxForce = Vector3.new(1, 1, 1) * 1e9
-        bv.Parent = hrp
-
-        bg = Instance.new("BodyGyro")
-        bg.CFrame = hrp.CFrame
-        bg.MaxTorque = Vector3.new(1, 1, 1) * 1e9
-        bg.P = 10^5
-        bg.Parent = hrp
-
-        RunService.RenderStepped:Connect(function()
-            if not flying then return end
-            local cam = workspace.CurrentCamera
-            local dir = Vector3.zero
-
-            if UserInputService:IsKeyDown(Enum.KeyCode.W) then dir += cam.CFrame.LookVector end
-            if UserInputService:IsKeyDown(Enum.KeyCode.S) then dir -= cam.CFrame.LookVector end
-            if UserInputService:IsKeyDown(Enum.KeyCode.A) then dir -= cam.CFrame.RightVector end
-            if UserInputService:IsKeyDown(Enum.KeyCode.D) then dir += cam.CFrame.RightVector end
-
-            bv.Velocity = dir.Magnitude > 0 and dir.Unit * speed or Vector3.zero
-            bg.CFrame = cam.CFrame
-        end)
-    end
-
-    local function stopFly()
-        flying = false
-        if bv then bv:Destroy() end
-        if bg then bg:Destroy() end
-    end
-
-    UserInputService.InputBegan:Connect(function(input, gpe)
-        if gpe then return end
-        if input.KeyCode == Enum.KeyCode.E then
-            if flying then stopFly() else startFly() end
-        end
-    end)
-end
-
--- Teleport
-local function teleportToLocation(vec)
-    local lp = game:GetService("Players").LocalPlayer
-    if lp.Character and lp.Character:FindFirstChild("HumanoidRootPart") then
-        lp.Character.HumanoidRootPart.CFrame = CFrame.new(vec)
-    end
-end
-
-local function teleportToPlayer(playerName)
-    local Players = game:GetService("Players")
-    local lp = Players.LocalPlayer
-    local target = Players:FindFirstChild(playerName)
-    if target and target.Character and target.Character:FindFirstChild("HumanoidRootPart") then
-        lp.Character.HumanoidRootPart.CFrame = target.Character.HumanoidRootPart.CFrame
-    end
-end
-
--- Main Tab UI
-MainTab:CreateButton({
-    Name = "Enable ESP",
-    Callback = runESP
-})
-
-MainTab:CreateButton({
-    Name = "Enable Fly (Toggle with 'E')",
-    Callback = runFly
-})
-
--- Teleport Tab UI
-TeleportTab:CreateInput({
-    Name = "Teleport to Coordinates",
-    PlaceholderText = "X, Y, Z",
-    RemoveTextAfterFocusLost = false,
-    Callback = function(text)
-        local x, y, z = text:match("([^,]+),%s*([^,]+),%s*([^,]+)")
-        if x and y and z then
-            teleportToLocation(Vector3.new(tonumber(x), tonumber(y), tonumber(z)))
-        else
-            Rayfield:Notify({
-                Title = "Invalid Input",
-                Content = "Enter coordinates like: 10, 20, 30",
-                Duration = 5
-            })
-        end
-    end
-})
-
-TeleportTab:CreateInput({
-    Name = "Teleport to Player",
-    PlaceholderText = "PlayerName",
-    RemoveTextAfterFocusLost = false,
-    Callback = teleportToPlayer
-})
-
--- Info Tab
-InfoTab:CreateParagraph({
-    Title = "Install Instructions",
-    Content = "1. Open your executor\n2. Paste this script\n3. Enjoy ZHub!"
-})
+-- Toggle visibility
+toggle.MouseButton1Click:Connect(function()
+	hub.Visible = not hub.Visible
+end)
